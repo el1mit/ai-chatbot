@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-type PageProps = {
+type ChatPageProps = {
 	params: {
 		id: string;
 	};
@@ -13,7 +13,7 @@ type ChatMessage = {
 	text: string;
 };
 
-const Page = ({ params }: PageProps) => {
+const ChatPage = ({ params }: ChatPageProps) => {
 	const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -110,4 +110,4 @@ const Page = ({ params }: PageProps) => {
 	);
 };
 
-export default Page;
+export default ChatPage;

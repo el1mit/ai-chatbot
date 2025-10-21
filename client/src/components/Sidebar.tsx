@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -8,29 +9,28 @@ import ChatItem from '@/components/ChatItem';
 // import { useAuth } from '@/context/authContext';
 // import { logoutUser } from '@/api/auth';
 
-interface SidebarProps {
+type SidebarProps = {
 	chats: Array<{
 		_id: string;
 		title: string;
 	}>;
 	status: 'loading' | 'error' | 'success';
-}
+};
 
 export default function Sidebar({ chats, status }: SidebarProps) {
 	// const { user, setUser, userLoading } = useAuth();
-	const { user, setUser, userLoading } = {
-		user: true,
-		setUser: () => {},
-		userLoading: false,
-	}; // Placeholder
+
+	const [user, setUser] = useState(true);
+	const userLoading = false;
+
 	const router = useRouter();
 	let content;
 
-	// const handleLogout = async () => {
-	// 	await logoutUser();
-	// 	setUser(null);
-	// 	router.push('/chat');
-	// };
+	const handleLogout = async () => {
+		// await logoutUser();
+		setUser(false);
+		router.push('/chat');
+	};
 
 	if (status === 'loading') content = <div>Loading Chats...</div>;
 	if (status === 'error') content = <div>Error while loading chats</div>;
@@ -71,7 +71,9 @@ export default function Sidebar({ chats, status }: SidebarProps) {
 
 			<div className="flex-none flex flex-col gap-2 m-4">
 				{user && !userLoading ? (
-					<Button variant="destructive">Logout</Button>
+					<Button variant="destructive" onClick={handleLogout}>
+						Logout
+					</Button>
 				) : (
 					<>
 						<Button asChild>

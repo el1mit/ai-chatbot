@@ -21,7 +21,9 @@ function FullscreenChat() {
 	// 	setDisabled(!user);
 	// }, [user]);
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = async (
+		e: React.MouseEvent<HTMLButtonElement>
+	): Promise<void> => {
 		e.preventDefault();
 		setDisabled(true);
 		setMessage('');

@@ -6,12 +6,12 @@ import { Edit2, Trash2, CheckIcon, XIcon } from 'lucide-react';
 // import { deleteChat, renameChat } from '@/api/chat';
 // import { useQueryClient } from '@tanstack/react-query';
 
-interface ChatItemProps {
+type ChatItemProps = {
 	chat: {
 		_id: string;
 		title: string;
 	};
-}
+};
 
 export default function ChatItem({ chat }: ChatItemProps) {
 	// const queryClient = useQueryClient();

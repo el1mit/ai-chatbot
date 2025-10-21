@@ -1,4 +1,7 @@
 'use client';
+
+import { ThemeSwitcher } from '@/components/ThemeSwitcher';
+
 // import ProductsList from '@/components/ProductsList';
 // import { useQuery } from '@tanstack/react-query';
 // import { getAllProducts } from '@/api/products';
@@ -22,6 +25,7 @@ export default function Home() {
 	return (
 		<div>
 			<h1 className="text-2xl font-bold mb-4">Welcome to the AI Chatbot</h1>
+			<ThemeSwitcher />
 			{/* <ProductsList products={data} /> */}
 		</div>
 	);

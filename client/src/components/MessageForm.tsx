@@ -3,12 +3,12 @@
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 
-interface MessageFormProps {
+type MessageFormProps = {
 	message: string;
 	setMessage: (message: string) => void;
-	handleSubmit: () => void;
+	handleSubmit: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void>;
 	disabled?: boolean;
-}
+};
 
 export default function MessageForm({
 	message,

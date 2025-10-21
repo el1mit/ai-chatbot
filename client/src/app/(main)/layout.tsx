@@ -1,5 +1,5 @@
 // import Header from '@/components/Header';
-// import ChatWidget from '@/components/ChatWidget';
+import ChatWidget from '@/components/ChatWidget';
 
 export default function MainLayout({
 	children,
@@ -10,7 +10,7 @@ export default function MainLayout({
 		<div className="container mx-auto">
 			{/* <Header /> */}
 			{children}
-			{/* <ChatWidget /> */}
+			<ChatWidget />
 		</div>
 	);
 }
