@@ -1,0 +1,22 @@
+# dependencies
+/client/node_modules
+/server/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+/client/coverage
+
+# next.js
+/client/.next/
+/client/out/
+
+# production
+/client/build
+/server/build
+
+# local env files
+/client/.env
+/server/.env
+
