@@ -2,22 +2,36 @@ const Chat = require('../models/Chat');
 const Message = require('../models/Message');
 const GoogleGenAI = require('@google/genai').GoogleGenAI;
 
+import { LMStudioClient } from '@lmstudio/sdk';
+const client = new LMStudioClient({ baseUrl: process.env.AI_SERVICE_URL });
+
 async function generateResponse(data) {
-	const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API });
-	const chat = ai.chats.create({
-		model: 'models/gemini-2.5-flash-preview-04-17',
-		config: {
-			systemInstruction: `You are a customer service assistant for an online electronics store.
-				You should help customers with their questions about the products they are buying, 
-				or give an technical support.`,
-		},
-		history: data.history,
-	});
+	// const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API });
+	// const chat = ai.chats.create({
+	// 	model: 'models/gemini-2.5-flash-preview-04-17',
+	// 	config: {
+	// 		systemInstruction: `You are a customer service assistant for an online electronics store.
+	// 			You should help customers with their questions about the products they are buying,
+	// 			or give an technical support.`,
+	// 	},
+	// 	history: data.history,
+	// });
 
-	const response = await chat.sendMessageStream({
-		message: data.message,
-	});
+	const model = await client.llm.model(process.env.MODEL);
 
+	for await (const fragment of model.respond('how can you help me?')) {
+		process.stdout.write(fragment.content);
+	}
+
+	// const response = await chat.sendMessageStream({
+	// 	message: data.message,
+	// });
+	const history = [
+		{ role: 'user', content: 'hello' },
+		{ role: 'system', content: 'hello, im an cutomer service assistant' },
+	];
+
+	const response = await model.respond(history);
 	return response;
 }
 
@@ -42,7 +56,7 @@ class messageController {
 
 			const response = await generateResponse(req.body);
 			for await (const chunk of response) {
-				res.write(chunk.text);
+				res.write(chunk.content);
 			}
 
 			res.end();
@@ -69,8 +83,8 @@ class messageController {
 			let answerText = '';
 			const response = await generateResponse(req.body);
 			for await (const chunk of response) {
-				answerText += chunk.text;
-				res.write(chunk.text);
+				answerText += chunk.content;
+				res.write(chunk.content);
 			}
 
 			const answer = await Message.create({

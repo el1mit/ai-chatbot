@@ -1,3 +1,16 @@
+// import { LMStudioClient } from '@lmstudio/sdk';
+
+// const client = new LMStudioClient({ baseUrl });
+// const MODEL = 'openai/gpt-oss-20b';
+
+// async function askQuestion(question) {
+// 	const model = await client.llm.model(MODEL);
+// 	const result = await model.respond(question);
+// 	return result;
+// }
+
+// askQuestion('What can you help with?').then(console.info);
+
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
@@ -8,8 +21,6 @@ const userRouter = require('./routes/userRouter');
 const roleRouter = require('./routes/roleRouter');
 const messageRouter = require('./routes/messageRouter');
 const chatRouter = require('./routes/chatRouter');
-const productRouter = require('./routes/productRouter');
-const categoryRouter = require('./routes/categoryRouter');
 const port = process.env.PORT || 8000;
 
 const app = express();
@@ -23,8 +34,6 @@ app.use(
 	})
 );
 
-app.use('/api/products', productRouter);
-app.use('/api/categories', categoryRouter);
 app.use('/api/messages', messageRouter);
 app.use('/api/chats', chatRouter);
 app.use('/api/users', userRouter);
