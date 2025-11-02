@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-// import { useAuth } from '@/context/authContext';
+import { useAuth } from '@/context/authContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,10 +15,10 @@ import {
 	CardContent,
 	CardFooter,
 } from '@/components/ui/card';
-// import { loginUser } from '@/api/auth';
+import { loginUser } from '@/api/auth';
 
 export default function LoginPage() {
-	// const { setUser } = useAuth();
+	const { setUser } = useAuth();
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
@@ -26,17 +26,24 @@ export default function LoginPage() {
 
 	const onSubmit = async (event: React.FormEvent): Promise<void> => {
 		event.preventDefault();
-		// try {
-		// 	console.log({ email, password });
-		// 	const response = await loginUser(email, password);
-		// 	console.log(response);
-		// 	if (response) {
-		// 		setUser(response);
-		// 		router.push('/');
-		// 	}
-		// } catch (error) {
-		// 	setError(error.message);
-		// }
+		try {
+			console.log({ email, password });
+			const response = await loginUser(email, password);
+			console.log(response);
+			if (response) {
+				setUser(response);
+				router.push('/');
+			}
+		} catch (error: unknown) {
+			// setError(error.message);
+			if (error instanceof Error) {
+				setError(error.message);
+			} else if (typeof error === 'string') {
+				setError(`Caught a string error: ${error}`);
+			} else {
+				setError(`An unknown error occurred:${error}`);
+			}
+		}
 		router.push('/');
 	};
 

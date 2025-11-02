@@ -4,22 +4,21 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
 import MessageForm from '@/components/MessageForm';
-// import { useAuth } from '@/context/authContext';
+import { useAuth } from '@/context/authContext';
 // import { createNewChat } from '@/api/chat';
 // import { askWithAuth } from '@/api/messages';
-// import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 function FullscreenChat() {
-	// const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
 	const router = useRouter();
-	// const { user } = useAuth();
+	const { user } = useAuth();
 	const [message, setMessage] = useState('');
 	const [disabled, setDisabled] = useState(true);
-	const [messagesHistory, setMessagesHistory] = useState([]);
 
-	// useEffect(() => {
-	// 	setDisabled(!user);
-	// }, [user]);
+	useEffect(() => {
+		setDisabled(!user);
+	}, [user]);
 
 	const handleSubmit = async (
 		e: React.MouseEvent<HTMLButtonElement>
@@ -28,8 +27,11 @@ function FullscreenChat() {
 		setDisabled(true);
 		setMessage('');
 
+		// Create new chat first with empty messages array then get chat id to nawigate to new chat page
+		// pass the message to new chat page and get streaming response there
+
 		// const chat = await createNewChat('New Chat');
-		// const answer = await askWithAuth(messagesHistory, message, chat._id);
+		// const answer = await askWithAuth(message, chat._id);
 
 		// if (chat && answer) {
 		// 	setDisabled(false);

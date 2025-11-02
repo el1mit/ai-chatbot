@@ -6,28 +6,28 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import ChatItem from '@/components/ChatItem';
-// import { useAuth } from '@/context/authContext';
-// import { logoutUser } from '@/api/auth';
+import { useAuth } from '@/context/authContext';
+import { logoutUser } from '@/api/auth';
 
 type SidebarProps = {
 	chats: Array<{
 		_id: string;
 		title: string;
 	}>;
-	status: 'loading' | 'error' | 'success';
+	status: 'loading' | 'error' | 'success' | 'pending';
 };
 
 export default function Sidebar({ chats, status }: SidebarProps) {
-	// const { user, setUser, userLoading } = useAuth();
+	const { user, setUser, userLoading } = useAuth();
 
-	const [user, setUser] = useState(true);
-	const userLoading = false;
+	// const [user, setUser] = useState(true);
+	// const userLoading = false;
 
 	const router = useRouter();
 	let content;
 
 	const handleLogout = async () => {
-		// await logoutUser();
+		await logoutUser();
 		setUser(false);
 		router.push('/chat');
 	};

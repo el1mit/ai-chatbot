@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-// import { useAuth } from '@/context/authContext';
+import { useAuth } from '@/context/authContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,10 +15,10 @@ import {
 	CardContent,
 	CardFooter,
 } from '@/components/ui/card';
-// import { signupUser } from '@/api/auth';
+import { signupUser } from '@/api/auth';
 
 export default function RegisterPage() {
-	// const { setUser } = useAuth();
+	const { setUser } = useAuth();
 	const [login, setLogin] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -28,20 +28,27 @@ export default function RegisterPage() {
 
 	const onSubmit = async (event: React.FormEvent): Promise<void> => {
 		event.preventDefault();
-		// try {
-		// 	if (password !== confirmPassword) {
-		// 		setError('Passwords do not match');
-		// 		return;
-		// 	}
-		// 	const response = await signupUser(login, email, password);
+		try {
+			if (password !== confirmPassword) {
+				setError('Passwords do not match');
+				return;
+			}
+			const response = await signupUser(login, email, password);
 
-		// 	if (response) {
-		// 		setUser(response);
-		// 		router.push('/');
-		// 	}
-		// } catch (error) {
-		// 	setError(error.message);
-		// }
+			if (response) {
+				setUser(response);
+				router.push('/');
+			}
+		} catch (error) {
+			// setError(error.message);
+			if (error instanceof Error) {
+				setError(error.message);
+			} else if (typeof error === 'string') {
+				setError(`Caught a string error: ${error}`);
+			} else {
+				setError(`An unknown error occurred:${error}`);
+			}
+		}
 		router.push('/');
 	};
 
