@@ -1,4 +1,5 @@
-const { body, validationResult } = require('express-validator');
+// const { body, validationResult } = require('express-validator');
+import { body, validationResult } from 'express-validator';
 
 const validate = (validations) => {
 	return async (req, res, next) => {
@@ -33,4 +34,4 @@ const signupValidator = [
 	...loginValidator,
 ];
 
-module.exports = { validate, loginValidator, signupValidator };
+export { validate, loginValidator, signupValidator };

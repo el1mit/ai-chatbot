@@ -1,5 +1,7 @@
-const jwt = require('jsonwebtoken');
-const { COOKIE_NAME } = require('./constants');
+// const jwt = require('jsonwebtoken');
+// const { COOKIE_NAME } = require('./constants');
+import jwt from 'jsonwebtoken';
+import { COOKIE_NAME } from './constants.js';
 
 const createToken = (id, login, email, expiresIn = '7d') => {
 	const payload = { id, login, email };
@@ -29,4 +31,4 @@ const verifyToken = async (req, res, next) => {
 	});
 };
 
-module.exports = { createToken, verifyToken };
+export { createToken, verifyToken };

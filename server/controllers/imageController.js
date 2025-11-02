@@ -1,5 +1,7 @@
-const axios = require('axios');
-const fs = require('fs');
+// const axios = require('axios');
+// const fs = require('fs');
+import axios from 'axios';
+import fs from 'fs';
 
 const imageController = {
 	async saveImage(image) {
@@ -21,4 +23,4 @@ const imageController = {
 	},
 };
 
-module.exports = imageController;
+export default imageController;

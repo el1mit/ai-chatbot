@@ -1,4 +1,4 @@
-const Role = require('../models/Role');
+import Role from '../models/Role.js';
 
 class roleController {
 	async getAllRoles(req, res) {
@@ -35,4 +35,4 @@ class roleController {
 	}
 }
 
-module.exports = roleController;
+export default roleController;

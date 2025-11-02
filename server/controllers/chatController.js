@@ -1,4 +1,5 @@
-const Chat = require('../models/Chat');
+// const Chat = require('../models/Chat');
+import Chat from '../models/Chat.js';
 
 class chatController {
 	async getAllUserChats(req, res) {
@@ -15,7 +16,9 @@ class chatController {
 			const chat = await Chat.create({
 				user_id: res.locals.jwtData.id,
 				title: req.body.title,
+				messages: [],
 			});
+
 			return res.status(200).json(chat);
 		} catch (error) {
 			return res.status(500).json({ message: error.message });
@@ -47,4 +50,4 @@ class chatController {
 	}
 }
 
-module.exports = chatController;
+export default chatController;

@@ -1,6 +1,7 @@
-const express = require('express');
-const chatController = require('../controllers/chatController');
-const { verifyToken } = require('../utils/tokenManager');
+import express from 'express';
+import chatController from '../controllers/chatController.js';
+import messageController from '../controllers/messageController.js';
+import { verifyToken } from '../utils/tokenManager.js';
 
 const chatRouter = express.Router();
 const ChatController = new chatController();
@@ -10,4 +11,4 @@ chatRouter.post('/', verifyToken, ChatController.createChat);
 chatRouter.put('/:id', ChatController.updateChat);
 chatRouter.delete('/:id', verifyToken, ChatController.deleteChat);
 
-module.exports = chatRouter;
+export default chatRouter;

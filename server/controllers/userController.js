@@ -1,8 +1,8 @@
-const { hash, compare } = require('bcrypt');
-const User = require('../models/User');
-const Role = require('../models/Role');
-const { createToken } = require('../utils/tokenManager');
-const { COOKIE_NAME } = require('../utils/constants');
+import { hash, compare } from 'bcrypt';
+import User from '../models/User.js';
+import Role from '../models/Role.js';
+import { createToken } from '../utils/tokenManager.js';
+import { COOKIE_NAME } from '../utils/constants.js';
 
 class userController {
 	async getAllUsers(req, res) {
@@ -159,4 +159,4 @@ class userController {
 	}
 }
 
-module.exports = userController;
+export default userController;

@@ -1,5 +1,5 @@
-const express = require('express');
-const roleController = require('../controllers/roleController');
+import express from 'express';
+import roleController from '../controllers/roleController.js';
 
 const roleRouter = express.Router();
 const RoleController = new roleController();
@@ -8,4 +8,4 @@ roleRouter.get('/', RoleController.getAllRoles);
 roleRouter.post('/', RoleController.createRole);
 roleRouter.put('/:id', RoleController.updateRole);
 
-module.exports = roleRouter;
+export default roleRouter;

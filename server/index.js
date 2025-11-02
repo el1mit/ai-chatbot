@@ -11,16 +11,16 @@
 
 // askQuestion('What can you help with?').then(console.info);
 
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
-require('dotenv').config();
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import 'dotenv/config';
 
-const { connectToDatabase } = require('./utils/db');
-const userRouter = require('./routes/userRouter');
-const roleRouter = require('./routes/roleRouter');
-const messageRouter = require('./routes/messageRouter');
-const chatRouter = require('./routes/chatRouter');
+import { connectToDatabase } from './utils/db.js';
+import userRouter from './routes/userRouter.js';
+import roleRouter from './routes/roleRouter.js';
+import messageRouter from './routes/messageRouter.js';
+import chatRouter from './routes/chatRouter.js';
 const port = process.env.PORT || 8000;
 
 const app = express();

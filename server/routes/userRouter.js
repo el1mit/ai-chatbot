@@ -1,13 +1,13 @@
-const express = require('express');
-const userController = require('../controllers/userController');
-const {
+import express from 'express';
+import userController from '../controllers/userController.js';
+import {
 	validate,
 	loginValidator,
 	signupValidator,
-} = require('../utils/validators');
-const { verifyToken } = require('../utils/tokenManager');
-// const authMidleware = require('../middlewares/AuthMiddleware');
-// const forbiddenMiddleware = require('../middlewares/ForbiddenMiddleware');
+} from '../utils/validators.js';
+import { verifyToken } from '../utils/tokenManager.js';
+// import authMidleware from ('../middlewares/AuthMiddleware.js');
+// import forbiddenMiddleware from ('../middlewares/ForbiddenMiddleware.js');
 
 const userRouter = express.Router();
 const UserController = new userController();
@@ -22,4 +22,4 @@ userRouter.post('/login', validate(loginValidator), UserController.userLogin);
 userRouter.get('/auth-status', verifyToken, UserController.verifyUser);
 userRouter.get('/logout', verifyToken, UserController.userLogout);
 
-module.exports = userRouter;
+export default userRouter;

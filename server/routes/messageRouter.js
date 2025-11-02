@@ -1,6 +1,6 @@
-const express = require('express');
-const messageController = require('../controllers/messageController');
-const { verifyToken } = require('../utils/tokenManager');
+import express from 'express';
+import messageController from '../controllers/messageController.js';
+import { verifyToken } from '../utils/tokenManager.js';
 
 const messageRouter = express.Router();
 const MessageController = new messageController();
@@ -13,4 +13,4 @@ messageRouter.post(
 	MessageController.responseWithSave
 );
 
-module.exports = messageRouter;
+export default messageRouter;
