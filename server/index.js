@@ -1,16 +1,3 @@
-// import { LMStudioClient } from '@lmstudio/sdk';
-
-// const client = new LMStudioClient({ baseUrl });
-// const MODEL = 'openai/gpt-oss-20b';
-
-// async function askQuestion(question) {
-// 	const model = await client.llm.model(MODEL);
-// 	const result = await model.respond(question);
-// 	return result;
-// }
-
-// askQuestion('What can you help with?').then(console.info);
-
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';

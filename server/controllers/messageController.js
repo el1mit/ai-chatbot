@@ -15,15 +15,17 @@ async function generateResponse(client, history = [], message = '') {
 	// 	history: data.history,
 	// });
 	const model = await client.llm.model(process.env.MODEL);
+	console.log(process.env.MODEL);
 	const chat = LMStudioChat.empty();
 	while (history.length > 0) {
 		const element = history.shift();
 		chat.append(element.answer ? 'system' : 'user', element.content);
 	}
 	chat.append('user', message);
-	const response = model.respond(chat, {
-		temperature: 0.2,
+	const response = await model.respond(chat, {
+		temperature: 0.8,
 	});
+
 	// for await (const fragment of response) {
 	// 	process.stdout.write(fragment.content);
 	// }
@@ -41,8 +43,6 @@ async function generateResponse(client, history = [], message = '') {
 }
 
 class messageController {
-	client = new LMStudioClient({ baseUrl: process.env.AI_SERVICE_URL });
-
 	async getAllMessagesByChat(req, res) {
 		try {
 			const chat_id = req.params.id;
@@ -58,16 +58,67 @@ class messageController {
 
 	async responseWithoutSave(req, res) {
 		try {
-			console.log(req.body);
+			const client = new LMStudioClient({
+				baseUrl: process.env.AI_SERVICE_URL,
+			});
 			// res.writeHead(200, {
 			// 	'Content-Type': 'text/plain',
 			// 	'Transfer-Encoding': 'chunked',
 			// });
 
-			const response = await generateResponse(req.body);
-			for await (const chunk of response) {
-				res.write(chunk.content);
+			// const response = await generateResponse(
+			// 	client,
+			// 	req.body.history,
+			// 	req.body.message
+			// );
+
+			const model = await client.llm.model(process.env.MODEL);
+
+			const chat = LMStudioChat.empty();
+			while (req.body.history.length > 0) {
+				const element = req.body.history.shift();
+				chat.append(element.answer ? 'system' : 'user', element.content);
 			}
+			chat.append('user', req.body.message);
+			const response = model.respond(chat, {
+				temperature: 0.8,
+			});
+
+			const delimiter = '<|channel|>final<|message|>';
+			let buffer = '';
+			let prefixFound = false;
+
+			for await (const { content } of response) {
+				if (prefixFound) {
+					res.write(content);
+				} else {
+					buffer += content;
+					const delimiterIndex = buffer.indexOf(delimiter);
+					if (delimiterIndex !== -1) {
+						prefixFound = true;
+
+						// 8. Extract *only* the content *after* the delimiter.
+						const actualMessage = buffer.substring(
+							delimiterIndex + delimiter.length
+						);
+
+						// 9. Write this first part of the actual message.
+						if (actualMessage.length > 0) {
+							res.write(actualMessage);
+						}
+
+						// 10. Clear the buffer; we don't need it anymore.
+						buffer = '';
+					}
+				}
+				console.log(content);
+				// res.write(content);
+			}
+
+			// for await (const chunk of response) {
+			// 	console.log(chunk.content);
+			// 	res.write(chunk.content);
+			// }
 
 			res.end();
 		} catch (error) {
@@ -96,16 +147,6 @@ class messageController {
 			// 	answerText += chunk.content;
 			// 	res.write(chunk.content);
 			// }
-			res.write('Start of the answer. ');
-			answerText += 'Start of the answer. ';
-			res.write('Part 1 of the answer. ');
-			answerText += 'Part 1 of the answer. ';
-			res.write('Part 2 of the answer. ');
-			answerText += 'Part 2 of the answer. ';
-			res.write('Part 3 of the answer. ');
-			answerText += 'Part 3 of the answer. ';
-			res.write('End of the answer. ');
-			answerText += 'End of the answer. ';
 
 			const answer = await Message.create({
 				content: answerText,

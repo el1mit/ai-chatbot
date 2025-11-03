@@ -12,24 +12,24 @@ import {
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import MessageForm from '@/components/MessageForm';
-// import { streamingFetch } from '@/api/messages';
+import { streamingFetch } from '@/api/messages';
 
 type ChatProps = {
 	visible: boolean;
 	onClick: () => void;
 };
 
-type Message = {
-	role: 'user' | 'model';
-	parts: Array<{ text: string }>;
+type ChatHistory = {
+	_id: number;
+	answer: boolean;
+	content: string;
 };
-type MessagesHistory = Array<Message>;
 
 export default function Chat({ visible, onClick }: ChatProps) {
-	const [message, setMessage] = useState<string>('');
-	const [answer, setAnswer] = useState<string>('');
-	const [disabled, setDisabled] = useState<boolean>(false);
-	const [messagesHistory, setMessagesHistory] = useState<MessagesHistory>([]);
+	const [message, setMessage] = useState('');
+	const [answer, setAnswer] = useState('');
+	const [disabled, setDisabled] = useState(false);
+	const [messagesHistory, setMessagesHistory] = useState<ChatHistory[]>([]);
 
 	const handleSubmit = async (
 		e: React.MouseEvent<HTMLButtonElement>
@@ -40,38 +40,30 @@ export default function Chat({ visible, onClick }: ChatProps) {
 		setAnswer('');
 		setMessagesHistory((prevState) => [
 			...prevState,
-			{ role: 'user', parts: [{ text: message }] },
+			{ _id: Date.now(), answer: false, content: message },
 		]);
 
-		// let chunkedAnswer = '';
-		// for await (const chunk of streamingFetch(() =>
-		// 	fetch('http://localhost:3001/api/messages/ask', {
-		// 		method: 'POST',
-		// 		headers: {
-		// 			'Content-Type': 'application/json',
-		// 		},
-		// 		body: JSON.stringify({ history: messagesHistory, message }),
-		// 	})
-		// )) {
-		// 	setAnswer((prev) => prev + chunk);
-		// 	chunkedAnswer += chunk;
-		// }
-		const chunkedAnswer = 'Some streamed answer.';
+		let chunkedAnswer = '';
+		for await (const chunk of streamingFetch(() =>
+			fetch('http://localhost:3001/api/messages/ask', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ history: messagesHistory, message }),
+			})
+		)) {
+			setAnswer((prev) => prev + chunk);
+			chunkedAnswer += chunk;
+		}
+
 		setMessagesHistory((prevState) => [
 			...prevState,
-			{ role: 'model', parts: [{ text: chunkedAnswer }] },
+			{ _id: Date.now(), answer: true, content: chunkedAnswer },
 		]);
 
 		setDisabled(false);
 		setAnswer('');
-
-		// if (answer) {
-		// 	setMessagesHistory((prevState) => [
-		// 		...prevState,
-		// 		{ role: 'model', parts: [{ text: answer }] },
-		// 	]);
-		// 	setDisabled(false);
-		// }
 	};
 
 	return (
@@ -96,11 +88,10 @@ export default function Chat({ visible, onClick }: ChatProps) {
 					<Card
 						key={id}
 						className={`${
-							message.role === 'user' &&
-							'self-end bg-primary text-primary-foreground'
+							!message.answer && 'self-end bg-primary text-primary-foreground'
 						} max-w-[85%] w-max flex flex-col gap-3 p-4 mx-4 my-2 overflow-visible`}
 					>
-						<ReactMarkdown>{message.parts[0].text}</ReactMarkdown>
+						<ReactMarkdown>{message.content}</ReactMarkdown>
 					</Card>
 				))}
 				{answer && (
