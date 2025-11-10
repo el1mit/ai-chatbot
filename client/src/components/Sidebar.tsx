@@ -86,7 +86,7 @@ export default function Sidebar({ chats, status }: SidebarProps) {
 				)}
 
 				<Button asChild className="w-full">
-					<Link href="/">Back to shop</Link>
+					<Link href="/">Back to site</Link>
 				</Button>
 			</div>
 		</div>

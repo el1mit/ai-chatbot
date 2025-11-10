@@ -20,3 +20,5 @@
 /client/.env
 /server/.env
 
+#logs
+/server/*.log

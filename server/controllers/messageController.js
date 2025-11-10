@@ -3,53 +3,27 @@ import Message from '../models/Message.js';
 
 import { LMStudioClient, Chat as LMStudioChat } from '@lmstudio/sdk';
 
-async function generateResponse(client, history = [], message = '') {
-	// const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API });
-	// const chat = ai.chats.create({
-	// 	model: 'models/gemini-2.5-flash-preview-04-17',
-	// 	config: {
-	// 		systemInstruction: `You are a customer service assistant for an online electronics store.
-	// 			You should help customers with their questions about the products they are buying,
-	// 			or give an technical support.`,
-	// 	},
-	// 	history: data.history,
-	// });
-	const model = await client.llm.model(process.env.MODEL);
-	console.log(process.env.MODEL);
+async function generateResponse(model, history = [], message = '') {
 	const chat = LMStudioChat.empty();
-	while (history.length > 0) {
-		const element = history.shift();
+	history.forEach((element) => {
 		chat.append(element.answer ? 'system' : 'user', element.content);
-	}
+	});
 	chat.append('user', message);
+
 	const response = await model.respond(chat, {
 		temperature: 0.8,
 	});
 
-	// for await (const fragment of response) {
-	// 	process.stdout.write(fragment.content);
-	// }
-
-	// const response = await chat.sendMessageStream({
-	// 	message: data.message,
-	// });
-	// const history = [
-	// 	{ role: 'user', content: 'hello' },
-	// 	{ role: 'system', content: 'hello, im an cutomer service assistant' },
-	// ];
-
-	// const response = await model.respond(history);
 	return response;
 }
 
 class messageController {
 	async getAllMessagesByChat(req, res) {
 		try {
-			const chat_id = req.params.id;
-			const chat = await Chat.findById(chat_id);
+			const chat = await Chat.findById(req.params.id);
 			if (!chat) return res.status(404).json({ message: 'Chat not found' });
+
 			const messages = chat.messages;
-			// const messages = await Message.find({ chat_id });
 			return res.status(200).json(messages);
 		} catch (error) {
 			return res.status(500).json({ message: error.message });
@@ -61,28 +35,13 @@ class messageController {
 			const client = new LMStudioClient({
 				baseUrl: process.env.AI_SERVICE_URL,
 			});
-			// res.writeHead(200, {
-			// 	'Content-Type': 'text/plain',
-			// 	'Transfer-Encoding': 'chunked',
-			// });
+			const model = await client.llm.model(process.env.AI_MODEL);
 
-			// const response = await generateResponse(
-			// 	client,
-			// 	req.body.history,
-			// 	req.body.message
-			// );
-
-			const model = await client.llm.model(process.env.MODEL);
-
-			const chat = LMStudioChat.empty();
-			while (req.body.history.length > 0) {
-				const element = req.body.history.shift();
-				chat.append(element.answer ? 'system' : 'user', element.content);
-			}
-			chat.append('user', req.body.message);
-			const response = model.respond(chat, {
-				temperature: 0.8,
-			});
+			const response = await generateResponse(
+				model,
+				req.body.history,
+				req.body.message
+			);
 
 			const delimiter = '<|channel|>final<|message|>';
 			let buffer = '';
@@ -97,28 +56,22 @@ class messageController {
 					if (delimiterIndex !== -1) {
 						prefixFound = true;
 
-						// 8. Extract *only* the content *after* the delimiter.
-						const actualMessage = buffer.substring(
-							delimiterIndex + delimiter.length
-						);
+						// // 8. Extract *only* the content *after* the delimiter.
+						// const actualMessage = buffer.substring(
+						// 	delimiterIndex + delimiter.length
+						// );
 
-						// 9. Write this first part of the actual message.
-						if (actualMessage.length > 0) {
-							res.write(actualMessage);
-						}
+						// // 9. Write this first part of the actual message.
+						// if (actualMessage.length > 0) {
+						// 	res.write(actualMessage);
+						// }
 
-						// 10. Clear the buffer; we don't need it anymore.
-						buffer = '';
+						// // 10. Clear the buffer; we don't need it anymore.
+						// buffer = '';
 					}
 				}
 				console.log(content);
-				// res.write(content);
 			}
-
-			// for await (const chunk of response) {
-			// 	console.log(chunk.content);
-			// 	res.write(chunk.content);
-			// }
 
 			res.end();
 		} catch (error) {
